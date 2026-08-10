@@ -49,7 +49,7 @@ The video stream is copied, not re-encoded. The generated clean audio track is e
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/cleanarr.git
+git clone https://github.com/chadpriddle/cleanarr.git
 cd cleanarr
 cp .env.example .env
 nano .env
