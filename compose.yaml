@@ -1,0 +1,39 @@
+services:
+  cleanarr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: python:3.12-slim
+    container_name: cleanarr
+    restart: unless-stopped
+    environment:
+      CLEANARR_WATCH_DIR: /watch
+      CLEANARR_OUTPUT_DIR: /movies
+      CLEANARR_ARCHIVE_DIR: /watch/.processed
+      CLEANARR_MODEL: ${CLEANARR_MODEL:-medium.en}
+      CLEANARR_DEVICE: ${CLEANARR_DEVICE:-cpu}
+      CLEANARR_COMPUTE_TYPE: ${CLEANARR_COMPUTE_TYPE:-int8}
+      CLEANARR_LANGUAGE: ${CLEANARR_LANGUAGE:-en}
+      CLEANARR_SCAN_INTERVAL: ${CLEANARR_SCAN_INTERVAL:-30}
+      CLEANARR_STABLE_SECONDS: ${CLEANARR_STABLE_SECONDS:-120}
+      CLEANARR_PROGRESS_STEP: ${CLEANARR_PROGRESS_STEP:-2}
+      CLEANARR_PADDING_BEFORE: ${CLEANARR_PADDING_BEFORE:-0.10}
+      CLEANARR_PADDING_AFTER: ${CLEANARR_PADDING_AFTER:-0.18}
+      CLEANARR_ARCHIVE_ORIGINAL: ${CLEANARR_ARCHIVE_ORIGINAL:-true}
+      CLEANARR_PRESERVE_ORIGINAL_AUDIO: ${CLEANARR_PRESERVE_ORIGINAL_AUDIO:-true}
+      CLEANARR_CLEAN_TRACK_TITLE: ${CLEANARR_CLEAN_TRACK_TITLE:-English - Clean (AI, Muted)}
+    volumes:
+      - ${WATCH_DIR:-/data/plex/whisper}:/watch
+      - ${OUTPUT_DIR:-/data/plex/movies}:/movies
+      - ./config:/config:ro
+      - cleanarr-models:/models
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/cleanarr-ready && kill -0 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+
+volumes:
+  cleanarr-models:
